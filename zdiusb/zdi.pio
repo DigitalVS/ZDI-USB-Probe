@@ -1,0 +1,72 @@
+;
+; Copyright (c) 2026 by Vitomir Spasojević. All rights reserved.
+;
+;
+
+.program zdi_rw
+.side_set 3
+
+  set pins, 1 side 0b111 ; Side bits order from right to left: ZCL_DIR, ZDA_DIR, ZCL_GPIO
+  pull side 0b111        ; Block is default already
+  out y, 16 side 0b111 ; Y counter is in higher 16 bits
+  set pins, 0 side 0b111 ; Start bit
+  out pc, 16 side 0b111 ; Jump to read or continue with write operation
+
+wr_bytes_loop:
+  set x, 7 side 0b111 ;
+
+out_bits_loop:
+  out pins, 1 side 0b110 [1]        ; Output one bit of the data shifting it from the OSR to the pins, on falling edge
+  jmp x--, out_bits_loop side 0b111 [1] ;
+
+  set pins, 1 side 0b110 [1] ; Byte separator, high value
+  jmp y--, wr_bytes_loop side 0b111 ;
+
+  jmp end side 0b111 ; // Goto end
+
+read:
+  set x, 7 side 0b111 ;
+
+addr_bits_loop:
+  out pins, 1 side 0b110 [1]        ; Output one bit of the data shifting it from the OSR to the pins, on falling edge
+  jmp x--, addr_bits_loop side 0b111 [1] ;
+
+  set pins, 1 side 0b110 [1]; Byte separator, high value
+  set pindirs, 0 side 0b101 [1]; Change pin direction to input for ZDA pin (0b01)
+
+rd_bytes_loop:
+  set x, 7 side 0b100 [1] ;
+
+in_bits_loop:
+  in pins, 1 side 0b101 [1] ; Read on raising edge
+  jmp x--, in_bits_loop side 0b100 [1] ;
+
+  set pins, 1 side 0b101 ; Byte separator, high value
+  jmp y--, rd_bytes_loop side 0b101 ;
+
+  ;set pindirs, 0 side 0b001 ; Change pins direction to input (tristate) (0b00)
+end:
+  set pindirs, 1 side 0b111 ; Output direction (don't clock more because other side will send first bit for the next byte!)
+  ;set pins, 1 side 0b111 ; clk value 1
+.wrap
+
+% c-sdk {
+
+void zdi_rw_program_init(PIO pio, uint sm, uint offset, uint pin, uint16_t div) {
+  pio_gpio_init(pio, pin);
+  pio_gpio_init(pio, pin + 1);
+  pio_gpio_init(pio, pin + 2);
+  pio_gpio_init(pio, pin + 3);
+  pio_sm_set_consecutive_pindirs(pio, sm, pin, 4, true);
+  pio_sm_config c = zdi_rw_program_get_default_config(offset);
+  sm_config_set_set_pins(&c, pin, 1);
+  sm_config_set_out_pins(&c, pin, 1);
+  sm_config_set_in_pins(&c, pin);
+  sm_config_set_sideset_pins(&c, pin + 1);
+  sm_config_set_clkdiv_int_frac(&c, div, 0);
+  sm_config_set_out_shift(&c, false, true, 32); // Shift left, MSB first. Auto-pull is on. Threshold is 8 bits.
+  sm_config_set_in_shift(&c, false, true, 8); // Shift left, MSB first. Auto-push is on. Threshold is 8 bits.
+  pio_sm_init(pio, sm, offset, &c);
+}
+
+%}
