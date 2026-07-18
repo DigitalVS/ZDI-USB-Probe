@@ -1,11 +1,11 @@
 import os
 from pathlib import Path
 
-from cmds.cmd import ErrorCode, DATA_SIZE_24BIT
-from icd_comm import IcdComm
-from output import Output
-from devices import default_device
-from utils import int_or_hex
+from zdi.cmds.cmd import ErrorCode, DATA_SIZE_24BIT
+from zdi.icd_comm import IcdComm
+from zdi.output import Output
+from zdi.devices import default_device
+from zdi.utils import int_or_hex
 
 
 def handler(args):

@@ -4,11 +4,11 @@ import serial
 import sys
 
 import serial.serialutil
-from cmds.cmd import Cmd
-from cmds.cmd import ErrorCode
+from zdi.cmds.cmd import Cmd
+from zdi.cmds.cmd import ErrorCode
 from tqdm import tqdm
 
-from utils import calc_checksum
+from zdi.utils import calc_checksum
 
 if sys.stdout.isatty():
     cbWhite = "\x1b[1;37m"

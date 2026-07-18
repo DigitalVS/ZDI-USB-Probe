@@ -1,8 +1,8 @@
-from cmds.cmd import Cmd, ErrorCode, Registers, DATA_SIZE_24BIT
-from devices import default_device
-from icd_comm import IcdComm
-from output import Output
-from utils import int_or_hex
+from zdi.cmds.cmd import Cmd, ErrorCode, Registers, DATA_SIZE_24BIT
+from zdi.devices import default_device
+from zdi.icd_comm import IcdComm
+from zdi.output import Output
+from zdi.utils import int_or_hex
 
 
 def handler(args):

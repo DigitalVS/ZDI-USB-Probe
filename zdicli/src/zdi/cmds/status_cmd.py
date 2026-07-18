@@ -1,9 +1,9 @@
 import struct
 
-from cmds.cmd import Cmd
-from icd_comm import IcdComm
-from output import Output
-from devices import default_device
+from zdi.cmds.cmd import Cmd
+from zdi.icd_comm import IcdComm
+from zdi.output import Output
+from zdi.devices import default_device
 
 
 def handler(args):

@@ -1,10 +1,9 @@
-from cmds.cmd import Cmd, DATA_SIZE_24BIT, DisassemblerOptions
-from devices import default_device
-from icd_comm import IcdComm
-from output import Output
+from zdi.cmds.cmd import Cmd, DATA_SIZE_24BIT, DisassemblerOptions
+from zdi.devices import default_device
+from zdi.icd_comm import IcdComm
+from zdi.output import Output
+from zdi.utils import int_or_hex
 import struct
-
-from utils import int_or_hex
 
 
 def handler(args):

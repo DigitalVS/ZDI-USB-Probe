@@ -1,7 +1,7 @@
-from cmds.cmd import Cmd
-from devices import default_device
-from icd_comm import IcdComm
-from output import Output
+from zdi.cmds.cmd import Cmd
+from zdi.devices import default_device
+from zdi.icd_comm import IcdComm
+from zdi.output import Output
 
 
 def handler_run(args):

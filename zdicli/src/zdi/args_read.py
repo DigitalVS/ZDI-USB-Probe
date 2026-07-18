@@ -1,20 +1,20 @@
 import argparse
-import devices
-import cmds.set_cmd
-import cmds.read_cmd
-import cmds.write_cmd
-import cmds.status_cmd
-import cmds.upload_cmd
-import cmds.download_cmd
-import cmds.break_cmd
-import cmds.reg_cmd
-import cmds.runstop_cmd
-import cmds.disassm_cmd
 
-BOARD_NAME = "ZDI USB"
+import zdi.cmds.break_cmd
+import zdi.cmds.disassm_cmd
+import zdi.cmds.download_cmd
+import zdi.cmds.read_cmd
+import zdi.cmds.reg_cmd
+import zdi.cmds.runstop_cmd
+import zdi.cmds.set_cmd
+import zdi.cmds.status_cmd
+import zdi.cmds.upload_cmd
+import zdi.cmds.write_cmd
+
+BOARD_NAME = "ZDI USB Probe"
 PROG_NAME = f"{BOARD_NAME} Command Line Interface"
 VERSION = "0.1.0"
-FW_VERSION = cmds.status_cmd.version()
+FW_VERSION = zdi.cmds.status_cmd.version()
 
 def main():
     args = _arg_parser().parse_args()
@@ -54,7 +54,7 @@ def _arg_parser():
         type=str,
         help="length in bytes to read",
     )
-    read_act.set_defaults(func=cmds.read_cmd.handler)
+    read_act.set_defaults(func=zdi.cmds.read_cmd.handler)
 
     # Write
     write_act = subs.add_parser("write", help="write data to target device")
@@ -72,7 +72,7 @@ def _arg_parser():
         type=str,
         help="hexadecimal string to write (max 255 bytes)",
     )
-    write_act.set_defaults(func=cmds.write_cmd.handler)
+    write_act.set_defaults(func=zdi.cmds.write_cmd.handler)
 
     # Upload
     upload_act = subs.add_parser("upload", help="upload binary file contents to target device")
@@ -89,7 +89,7 @@ def _arg_parser():
         type=str,
         help="binary file to upload",
     )
-    upload_act.set_defaults(func=cmds.upload_cmd.handler)
+    upload_act.set_defaults(func=zdi.cmds.upload_cmd.handler)
 
     # Download
     download_act = subs.add_parser("download", help="download binary file contents from target device")
@@ -111,7 +111,7 @@ def _arg_parser():
         type=str,
         help="binary file to save downloaded data",
     )
-    download_act.set_defaults(func=cmds.download_cmd.handler)
+    download_act.set_defaults(func=zdi.cmds.download_cmd.handler)
 
     # Set
     set_act = subs.add_parser("set", help="set basic parameters (eg. ZDI speed, ADL mode, ICD boot mode)")
@@ -129,7 +129,7 @@ def _arg_parser():
         choices=[0, 1],
         help="ADL mode value (0 or 1)",
     )
-    set_act.set_defaults(func=cmds.set_cmd.handler)
+    set_act.set_defaults(func=zdi.cmds.set_cmd.handler)
 
     # Break
     break_act = subs.add_parser("break", help="set or display breakpoint information")
@@ -150,15 +150,15 @@ def _arg_parser():
         type=str,
         help="breakpoint address",
     )
-    break_act.set_defaults(func=cmds.break_cmd.handler)
+    break_act.set_defaults(func=zdi.cmds.break_cmd.handler)
 
     # Step
     break_act = subs.add_parser("step", help="single step execution")
-    break_act.set_defaults(func=cmds.break_cmd.handler_step)
+    break_act.set_defaults(func=zdi.cmds.break_cmd.handler_step)
 
     # Breaks
     breaks_act = subs.add_parser("breaks", help="display information for all breakpoints")
-    breaks_act.set_defaults(func=cmds.break_cmd.handler_breaks)
+    breaks_act.set_defaults(func=zdi.cmds.break_cmd.handler_breaks)
     breaks_act.add_argument(
         "-d", "--disable", action="store_false", help="disable all breakpoints",
     )
@@ -192,15 +192,15 @@ def _arg_parser():
     reg_act.add_argument(
         "-l", "--long", action="store_true", help="write 24-bit long value to register pair in non ADL mode",
     )
-    reg_act.set_defaults(func=cmds.reg_cmd.handler)
+    reg_act.set_defaults(func=zdi.cmds.reg_cmd.handler)
 
     # Reg
     regs_act = subs.add_parser("regs", help="display value for all registers")
-    regs_act.set_defaults(func=cmds.reg_cmd.handler_regs)
+    regs_act.set_defaults(func=zdi.cmds.reg_cmd.handler_regs)
 
     # Disassemble
     disassm_act = subs.add_parser("disassm", help="disassemble a memory block")
-    disassm_act.set_defaults(func=cmds.disassm_cmd.handler)
+    disassm_act.set_defaults(func=zdi.cmds.disassm_cmd.handler)
     disassm_act.add_argument(
         "address",
         nargs="?", # argument is optional
@@ -220,26 +220,26 @@ def _arg_parser():
 
     # Run
     run_act = subs.add_parser("run", help="continue execution from the current address")
-    run_act.set_defaults(func=cmds.runstop_cmd.handler_run)
+    run_act.set_defaults(func=zdi.cmds.runstop_cmd.handler_run)
 
     # Stop
     stop_act = subs.add_parser("stop", help="break on next instruction")
-    stop_act.set_defaults(func=cmds.runstop_cmd.handler_stop)
+    stop_act.set_defaults(func=zdi.cmds.runstop_cmd.handler_stop)
 
     # Reset
     reset_act = subs.add_parser("reset", help="reset the CPU")
-    reset_act.set_defaults(func=cmds.runstop_cmd.handler_reset)
+    reset_act.set_defaults(func=zdi.cmds.runstop_cmd.handler_reset)
     reset_act.add_argument(
         "-f", "--full", action="store_true", help="full target device reset instead of only CPU core reset",
     )
 
     # Status
     status_act = subs.add_parser("status", help="show status of target device")
-    status_act.set_defaults(func=cmds.status_cmd.handler)
+    status_act.set_defaults(func=zdi.cmds.status_cmd.handler)
 
     # Devices list
     devices_act = subs.add_parser("devices", help=f"list {BOARD_NAME} devices")
-    devices_act.set_defaults(func=devices.handler)
+    devices_act.set_defaults(func=zdi.devices.handler)
 
     return parser
 
