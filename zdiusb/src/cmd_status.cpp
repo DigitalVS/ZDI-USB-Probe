@@ -15,6 +15,9 @@ CmdStatus::CmdStatus(CmdId id, cbuf_handle_t cbuf) : Cmd(id) {
 }
 
 bool CmdStatus::execute() {
+  if (!Cmd::execute())
+    return false;
+
   // Get CPU state from the target
   pioSm.pio->txf[pioSm.sm] = 0x0000 << 16 | PIO_READ_ZDI; // Read
   pioSm.pio->txf[pioSm.sm] = ZDI_STAT << 24;

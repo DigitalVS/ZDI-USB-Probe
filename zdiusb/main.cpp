@@ -12,6 +12,7 @@
 #include "hardware/clocks.h"
 #include "hardware/dma.h"
 #include "hardware/watchdog.h"
+#include "hardware/adc.h"
 #include "zdi.pio.h"
 #include "circular_buffer.h"
 #include "zdi.h"
@@ -35,25 +36,31 @@ void zdi_task() {
     gpio_put(LED_GPIO, true);
     Cmd* cmd = Cmd::create(me);
 
-    if (cmd != NULL && cmd->execute()) {
-      ResponseBuf resBuff = cmd->getResponse();
+    if (cmd != NULL) { // Error message is already printed for cmd == NULL
+      ResponseBuf resBuff;
+
+      if (cmd->execute()) {
+        resBuff = cmd->getResponse();
+      } else {
+        resBuff = cmd->getErrResponse();
+        printf("Command failed (err: %d)\n", cmd->getErrorCode());
+      }
 
       if (resBuff.startAddr != NULL && tud_cdc_n_connected(0)) {
         uint32_t no = tud_cdc_n_write(0, resBuff.startAddr, resBuff.size);
         tud_cdc_n_write_flush(0 /*itf*/);
         //printf("Response bytes: %d/%d\n", no, resBuff.size);
       }
-    } else
-      printf("Failed to execute the command!\n");
+    }
 
     delete cmd;
     gpio_put(LED_GPIO, false);
   }
 }
 
-// callback when data is received on a CDC interface
+// Callback when data is received on a CDC interface
 void tud_cdc_rx_cb(uint8_t itf) {
-  printf("RX CDC %d\n", itf);
+  //printf("RX CDC %d\n", itf);
 
   // read the available data
   uint32_t count = tud_cdc_n_read(itf, usb_rx_buf, sizeof(usb_rx_buf));
@@ -89,8 +96,18 @@ int main() {
 
   me = circular_buf_init(c_buffer, CIRCULAR_BUFFER_SIZE);
 
+  // Initialize GPIOs
   gpio_init(LED_GPIO);
   gpio_set_dir(LED_GPIO, GPIO_OUT);
+
+  gpio_init(RESET_GPIO);
+  gpio_put(RESET_GPIO, 0); // Reset not active
+  gpio_set_dir(RESET_GPIO, GPIO_OUT);
+
+  // Initialize ADC
+  adc_init();
+  adc_gpio_init(VTG_SENSE_GPIO);
+  adc_select_input(2); // ADC channel 2 for GPIO 28
 
   pioSm.pio = pio0;
   pioSm.sm = 0;
@@ -150,8 +167,7 @@ int main() {
   watchdog_enable(1000, 1);
 
   while (1) {
-    // TinyUSB device task, must be called regularly
-    tud_task();
+    tud_task(); // TinyUSB device task, must be called regularly
 
     zdi_task();
 

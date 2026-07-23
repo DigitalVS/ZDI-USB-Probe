@@ -14,7 +14,20 @@ import zdi.cmds.write_cmd
 BOARD_NAME = "ZDI USB Probe"
 PROG_NAME = f"{BOARD_NAME} Command Line Interface"
 VERSION = "0.1.0"
-FW_VERSION = zdi.cmds.status_cmd.version()
+
+class LazyVersion: # Lazy version to not execute every time module is loaded
+    def _resolve(self): # Resolve the function into a string once
+        return f"{PROG_NAME} V{VERSION}\nZDI USB Probe firmware V{zdi.cmds.status_cmd.version()}\nCopyright (c) 2026 Vitomir Spasojević"
+
+    def splitlines(self, keepends=False): # Triggered by RawTextHelpFormatter!
+        return self._resolve().splitlines(keepends)
+
+    def __str__(self):
+        return self._resolve()
+
+    def __contains__(self, key): # Keeps internal argparse `%` check from triggering early
+        return False
+
 
 def main():
     args = _arg_parser().parse_args()
@@ -25,10 +38,7 @@ def _arg_parser():
     group = parser.add_mutually_exclusive_group()
 
     parser.add_argument(
-        "--version", action="version",
-        version=f"{PROG_NAME} V{VERSION}\n"
-                f"ZDI USB Probe firmware V{FW_VERSION}\n"
-                f"Copyright (c) 2026 Vitomir Spasojević"
+        "--version", action="version", version=LazyVersion()
     )
     group.add_argument(
         "-q", "--quiet", action="store_true", help="silence almost all output"
@@ -160,7 +170,7 @@ def _arg_parser():
     breaks_act = subs.add_parser("breaks", help="display information for all breakpoints")
     breaks_act.set_defaults(func=zdi.cmds.break_cmd.handler_breaks)
     breaks_act.add_argument(
-        "-d", "--disable", action="store_false", help="disable all breakpoints",
+        "-d", "--disable", action="store_true", help="disable all breakpoints",
     )
 
     # Reg
@@ -231,6 +241,9 @@ def _arg_parser():
     reset_act.set_defaults(func=zdi.cmds.runstop_cmd.handler_reset)
     reset_act.add_argument(
         "-f", "--full", action="store_true", help="full target device reset instead of only CPU core reset",
+    )
+    reset_act.add_argument(
+        "-s", "--stop", action="store_true", help="stop CPU on first instruction following the reset",
     )
 
     # Status

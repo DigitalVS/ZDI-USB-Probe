@@ -22,11 +22,11 @@ typedef enum : uint8_t {
   ZDI_WR_DATA_U	  = 0x15 << 1,
   ZDI_RW_CTL      = 0x16 << 1,
   ZDI_BUS_CTL     = 0x17 << 1,
-  ZDI_IS4	        = 0x21 << 1,
-  ZDI_IS3	        = 0x22 << 1,
-  ZDI_IS2	        = 0x23 << 1,
-  ZDI_IS1	        = 0x24 << 1,
-  ZDI_IS0	        = 0x25 << 1,
+  ZDI_IS4         = 0x21 << 1,
+  ZDI_IS3         = 0x22 << 1,
+  ZDI_IS2         = 0x23 << 1,
+  ZDI_IS1         = 0x24 << 1,
+  ZDI_IS0         = 0x25 << 1,
   ZDI_WR_MEM      = 0x30 << 1,
   // ZDI read-only registers
   ZDI_ID_L        = (0x00 << 1) | 0x01,
@@ -44,16 +44,16 @@ typedef enum : uint8_t {
 
 // ZDI_BRK_CTL bit values
 #define	ZDI_BRK_NEXT    0x80
-#define	ZDI_BRK_ADDR3	  0x40 // 0 - Disabled, 1 - Enabled
-#define	ZDI_BRK_ADDR2	  0x20
-#define	ZDI_BRK_ADDR1	  0x10
-#define	ZDI_BRK_ADDR0	  0x08
-#define	ZDI_IGN_LOW_1	  0x04
-#define	ZDI_IGN_LOW_0	  0x02
-#define	ZDI_SINGLE_STEP	0x01
+#define	ZDI_BRK_ADDR3   0x40 // 0 - Disabled, 1 - Enabled
+#define	ZDI_BRK_ADDR2   0x20
+#define	ZDI_BRK_ADDR1   0x10
+#define	ZDI_BRK_ADDR0   0x08
+#define	ZDI_IGN_LOW_1   0x04
+#define	ZDI_IGN_LOW_0   0x02
+#define	ZDI_SINGLE_STEP 0x01
 
 // ZDI_MASTER_CTL bit values
-#define	ZDI_RESET	      0x80
+#define	ZDI_RESET       0x80
 
 // ZDI_RW_CTL bit values
 #define	ZDI_REG_AF      0x00
@@ -100,7 +100,7 @@ typedef enum : uint8_t {
 #define	ZDI_IEF1        0x04
 
 // ZDI_BUS_STAT bit values
-#define	ZDI_BUSACK_EN	  0x80
+#define	ZDI_BUSACK_EN   0x80
 #define	ZDI_BUSACK_STAT 0x40
 
 // Register save mask
@@ -125,7 +125,7 @@ typedef enum : uint8_t {
 // Side_set pins: 3
 // Pindirs consecutive pins: 4
 #define PIO_ZDA_GPIO 10
-//#define PIO_ZCL_GPIO 11
+#define PIO_ZCL_GPIO 11
 //#define ZDA_DIR_GPIO 12 // Direction control for ZDA transceiver pin
 //#define ZCL_DIR_GPIO 13
 #define LED_GPIO 25

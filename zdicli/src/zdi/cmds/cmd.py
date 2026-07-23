@@ -108,6 +108,7 @@ class ErrorCode(Enum):
     ERR_KEY_INTERRUPT = (6, "Canceled with CTRL+C")
     ERR_STEP = (7, "CPU must be stopped before single stepping")
     ERR_DISASSEMBLER = (8, "CPU must be stopped before disassembling region pointed by the PC register")
+    ERR_NO_TARGET = (9, "No target device connected")
 
     def __init__(self, id_val: int, description: str):
         self._id = id_val

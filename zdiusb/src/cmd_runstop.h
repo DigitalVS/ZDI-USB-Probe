@@ -13,6 +13,7 @@ class CmdRunStop : public Cmd {
     void fullReset(); // Pull down reset signal
 
     uint8_t isFullReset;
+    uint8_t stopOnReset;
 };
 
 #endif

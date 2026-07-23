@@ -19,6 +19,9 @@ CmdRead::CmdRead(CmdId id, cbuf_handle_t cbuf) : Cmd(id) {
 }
 
 bool CmdRead::execute() {
+  if (!Cmd::execute())
+    return false;
+
   // for (int i = 0; i < 10; i++)
   //   cmd_rd_buf[i] = 0;
 

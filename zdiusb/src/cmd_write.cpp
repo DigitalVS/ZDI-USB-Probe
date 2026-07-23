@@ -25,6 +25,9 @@ CmdWrite::CmdWrite(CmdId id, cbuf_handle_t cbuf) : Cmd(id) {
 }
 
 bool CmdWrite::execute() {
+  if (!Cmd::execute())
+    return false;
+
   stopCPU();
 
   if (!config.ez80_stopped)

@@ -2,6 +2,7 @@
 
 #include "hardware/pio.h"
 #include "hardware/dma.h"
+#include "hardware/adc.h"
 #include "cmd.h"
 #include "cmd_version.h"
 #include "cmd_set.h"
@@ -15,6 +16,8 @@
 
 extern int wr_dma_ch;
 extern int rd_dma_ch;
+
+const float ADC_CONST = 3.3f / 4096.0f; // 3.3V is a reference voltage
 
 Config config = {
   .ez80_stopped = 0,
@@ -40,9 +43,7 @@ void rd_dma_irq_handler() {
 
 //-------------------------------------
 
-Cmd::Cmd(CmdId id) {
-  this->id = id;
-  this->errCode = ERR_SUCCESS;
+Cmd::Cmd(CmdId id) : id(id), errCode(ERR_SUCCESS) {
 }
 
 Cmd* Cmd::create(cbuf_handle_t cbuf) {
@@ -85,6 +86,24 @@ Cmd* Cmd::create(cbuf_handle_t cbuf) {
   }
 
   return NULL;
+}
+
+bool Cmd::execute() {
+  uint16_t raw_value = adc_read();
+  float voltage = raw_value * ADC_CONST; // Voltage is halved with divider, so max voltage in normal circumstances is about 1.65V
+
+  if (voltage < 0.9f) { // If actual voltage is less than 1.8V, target device is considered as not connected
+    errCode = ERR_NO_TARGET;
+    return false;
+  }
+
+  return true;
+}
+
+ResponseBuf Cmd::getErrResponse() {
+  Cmd::outBuffer[0] = ERROR; // Message type
+  Cmd::outBuffer[1] = errCode;
+  return ResponseBuf { .startAddr = Cmd::outBuffer, .size = 2 };
 }
 
 uint8_t Cmd::getBrkCtlValue(const bool break_next, const bool single_step) {

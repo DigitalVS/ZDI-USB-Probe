@@ -57,7 +57,7 @@ void zdi_rw_program_init(PIO pio, uint sm, uint offset, uint pin, uint16_t div) 
   pio_gpio_init(pio, pin + 1);
   pio_gpio_init(pio, pin + 2);
   pio_gpio_init(pio, pin + 3);
-  pio_sm_set_consecutive_pindirs(pio, sm, pin, 4, true);
+  pio_sm_set_consecutive_pindirs(pio, sm, pin, 4, true); // Set 4 pins as output pins
   pio_sm_config c = zdi_rw_program_get_default_config(offset);
   sm_config_set_set_pins(&c, pin, 1);
   sm_config_set_out_pins(&c, pin, 1);

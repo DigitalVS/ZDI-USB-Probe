@@ -51,7 +51,7 @@ add_subdirectory(src)
 target_include_directories(zdi PUBLIC
         ${CMAKE_CURRENT_LIST_DIR})
 
-target_link_libraries(zdi PRIVATE pico_stdlib hardware_pio hardware_dma tinyusb_device tinyusb_board)
+target_link_libraries(zdi PRIVATE pico_stdlib hardware_pio hardware_dma tinyusb_device tinyusb_board hardware_adc)
 pico_add_extra_outputs(zdi)
 
 #if (TARGET tinyusb_device)

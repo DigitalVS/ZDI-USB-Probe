@@ -149,8 +149,12 @@ CmdDisassemble::CmdDisassemble(CmdId id, cbuf_handle_t cbuf) : Cmd(id), instNo(0
 
 bool CmdDisassemble::execute() {
   if (id == DISASSEMBLE && !config.ez80_stopped) { // For disassembling from PC address, if CPU not stopped, do not execute the command
-    return true;
+    errCode = ERR_DISASSEMBLER;
+    return false;
   }
+
+  if (!Cmd::execute())
+    return false;
 
   readData();
 
@@ -195,12 +199,6 @@ bool CmdDisassemble::execute() {
 }
 
 ResponseBuf CmdDisassemble::getResponse() {
-  if (id == DISASSEMBLE && !config.ez80_stopped) { // For disassembling from PC address, CPU must be in stopped state
-    Cmd::outBuffer[0] = ERROR; // Message type
-    Cmd::outBuffer[1] = ERR_DISASSEMBLER; // Error code
-    return ResponseBuf { .startAddr = Cmd::outBuffer, .size = 2};
-  }
-
   respLength += 2; // Two additional bytes for instNo
 
   // Create a response message

@@ -72,6 +72,33 @@ class IcdComm(object):
         self._serial.write(data)
         return True
 
+    def send_data_with_response_err(self, data, return_data_size):
+        """
+        Send command and receive fixed size message or two bytes error response
+        :param data:
+        :param return_data_size:
+        :return: True, Data on success, False, None on failure
+        """
+        try:
+            self.init_programmer()
+        except serial.SerialException:
+            if self._verbosity > 0:
+                print(f"{cbRed}Failure{cReset}: Device not found, or communication failure")
+            return False, None
+
+        self._serial.write(data)
+        rd_response = self._serial.read(1)  # Read only one byte, the message type
+
+        if rd_response == Cmd.ERROR:
+            err_code = self._serial.read(1)[0]
+            print(f"{cbRed}Failure{cReset}: {ErrorCode.get_description(err_code)} ({err_code}).")
+            return False, None
+        elif rd_response[0] != data[0]: # Check message type
+            print(f"{cbRed}Failure{cReset}: Unexpected response message received: {rd_response[0]}")
+            return False, None
+
+        return True, self._serial.read(return_data_size - 1)
+
     def send_data_with_response(self, data, return_data_size):
         """
         Send command and receive fixed size message

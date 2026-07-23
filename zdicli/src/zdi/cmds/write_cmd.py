@@ -26,14 +26,10 @@ def handler(args):
             output.error("WRITE", f"Length too long: {length}. Max length is 255 bytes.")
             return
 
-        status, wr_response = prog.send_data_with_response(Cmd.WRITE + address.to_bytes(3, 'little') + length.to_bytes(2, byteorder='little') +  data, 2)
+        status, wr_response = prog.send_data_with_response_err(Cmd.WRITE + address.to_bytes(3, 'little') + length.to_bytes(2, byteorder='little') +  data, 2)
 
         if status:
-            if wr_response[0] == Cmd.ERROR:
-                output.error("WRITE", f"Write error: {ErrorCode.get_description(wr_response[1])} ({wr_response[1]})")
-                return
-
-            wr_checksum = wr_response[1]
+            wr_checksum = wr_response[0]
             checksum = calc_checksum(data)
 
             if checksum != wr_checksum:

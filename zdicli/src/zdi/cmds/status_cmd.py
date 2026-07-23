@@ -11,10 +11,10 @@ def handler(args):
 
     prog = IcdComm("STATUS", default_device(), output.verbosity())
 
-    status, res_data = prog.send_data_with_response(Cmd.STATUS, 7)
+    status, res_data = prog.send_data_with_response_err(Cmd.STATUS, 7)
 
     if status:
-        cmd, speed_type, speed, zdi_status_type, zdi_status, target_type, target_connected = struct.unpack('<ccccccc', res_data)
+        speed_type, speed, zdi_status_type, zdi_status, target_type, target_connected = struct.unpack('<cccccc', res_data)
 
         print(f"ZDI speed: {speed[0]}MHz")
         print(f"eZ80 status: ADL = {zdi_status[0] >> 4 & 1}, MADL = {zdi_status[0] >> 3 & 1}, ZDI active:", "Yes," if (zdi_status[0] >> 7) & 1 else "No,",

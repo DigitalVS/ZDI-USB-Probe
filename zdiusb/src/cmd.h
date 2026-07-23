@@ -10,7 +10,8 @@
 const uint16_t CMD_DATA_BUF_SIZE = 4096;
 const uint16_t DMA_DATA_BUF_SIZE = 4196; // 100 bytes is for overhead data (save and restore PC register, etc.)
 
-typedef enum : uint8_t {ERR_SUCCESS, ERR_UNKNOWN, ERR_PARAM, ERR_DATA_SIZE, ERR_TIMEOUT, ERR_CHECKSUM, ERR_KEY_INTERRUPT, ERR_STEP, ERR_DISASSEMBLER} CmdErrorCode;
+typedef enum : uint8_t {ERR_SUCCESS, ERR_UNKNOWN, ERR_PARAM, ERR_DATA_SIZE, ERR_TIMEOUT, ERR_CHECKSUM, ERR_KEY_INTERRUPT, ERR_STEP,
+  ERR_DISASSEMBLER, ERR_NO_TARGET} CmdErrorCode;
 typedef enum : uint8_t {ERROR, VERSION, STATUS, SET, GET, READ, WRITE, VERIFY, BREAK_SET, BREAK_READ, BREAKS, STEP, REG_SET, REG_READ, REGS, REGS_EXX, RUN, STOP,
   RESET, DISASSEMBLE, DISASSEMBLE_ADDR} CmdId;
 typedef enum : uint8_t {ZDI_SPEED = 1, ADL_MODE, ZDI_STATUS, TARGET_CONNECTED, BOOT_MODE} StateType; // Used by SET and STATE commands
@@ -28,9 +29,11 @@ class Cmd {
 
     static Cmd* create(cbuf_handle_t cbuf);
 
-    virtual bool execute() = 0;
+    virtual bool execute();
     virtual ResponseBuf getResponse() { return ResponseBuf { .startAddr = NULL, .size = 0 }; }
+    ResponseBuf getErrResponse();
     CmdId getId() { return id; }
+    CmdErrorCode getErrorCode() { return errCode; }
 
     static inline uint32_t cmd_wr_buf[DMA_DATA_BUF_SIZE / 4];
     static inline uint8_t cmd_rd_buf[DMA_DATA_BUF_SIZE];

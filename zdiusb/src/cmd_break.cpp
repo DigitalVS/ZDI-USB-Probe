@@ -9,7 +9,7 @@ extern Config config;
 extern int wr_dma_ch;
 extern int rd_dma_ch;
 
-CmdBreak::CmdBreak(CmdId id, cbuf_handle_t cbuf) : Cmd(id) {
+CmdBreak::CmdBreak(CmdId id, cbuf_handle_t cbuf) : Cmd(id), disableAll(0) {
   switch (id) {
     case BREAK_SET:
       parseBreakSet(cbuf);
@@ -50,6 +50,9 @@ void CmdBreak::parseBreakSet(cbuf_handle_t cbuf) {
 }
 
 bool CmdBreak::execute() {
+  if (!Cmd::execute())
+    return false;
+
   outBuffer[0] = id; // Message type
 
   switch (id) {

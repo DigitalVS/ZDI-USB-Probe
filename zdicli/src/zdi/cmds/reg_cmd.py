@@ -27,23 +27,20 @@ def handler(args):
 
         if args.read is not None:
             reg_id = Registers.get_id(args.read)
-            status, reg_response = prog.send_data_with_response(Cmd.REG_READ + reg_id, 5)
+            status, reg_response = prog.send_data_with_response_err(Cmd.REG_READ + reg_id, 5)
         else: # Write operation
             reg_id = Registers.get_id(args.write)
             reg_val = int_or_hex(args.value)
-            status, reg_response = prog.send_data_with_response(Cmd.REG_SET + reg_id + reg_val.to_bytes(3, 'little') + bytes(1 if args.long else 0), 5)
+            status, reg_response = prog.send_data_with_response_err(Cmd.REG_SET + reg_id + reg_val.to_bytes(3, 'little') + bytes(1 if args.long else 0), 5)
 
         if status:
             if len(reg_response) == 0:
                 output.error("REG", "Response not received!")
                 return
-            if reg_response[0].to_bytes() == Cmd.ERROR:
-                output.error("REG", f"Reg error: {ErrorCode.get_description(reg_response[1])} ({reg_response[1]})")
-                return
 
-            reg_val_response = int.from_bytes(reg_response[2:], 'little')
+            reg_val_response = int.from_bytes(reg_response[1:], 'little')
 
-            if reg_response[0].to_bytes() == Cmd.REG_READ:
+            if args.read is not None: # Read operation
                 output.success("REG", f"Register {args.read} value is 0x{reg_val_response:06X}")
             else: # Write operation
                 if reg_val != reg_val_response:
@@ -60,15 +57,11 @@ def handler_regs(args):
         "REGS", default_device(), output.verbosity()
     )
 
-    status, reg_response = prog.send_data_with_response(Cmd.REGS, 25)
+    status, reg_response = prog.send_data_with_response_err(Cmd.REGS, 25)
 
     if status:
-        if reg_response[0] == Cmd.ERROR:
-            output.error("REGS", f"REGS error: {ErrorCode.get_description(reg_response[1])} ({reg_response[1]})")
-            return
-
         regs = ["AF", "BC", "DE", "HL", "IX", "IY", "SP", "PC"]
 
         for i in range(0, 8):
-            reg_val = int.from_bytes(reg_response[i * 3 + 1: i * 3 + 4], byteorder='little')
+            reg_val = int.from_bytes(reg_response[i * 3: i * 3 + 3], byteorder='little')
             print(f"{regs[i]}: 0x{reg_val:06X}")

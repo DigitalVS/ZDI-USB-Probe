@@ -31,6 +31,9 @@ CmdSet::CmdSet(CmdId id, cbuf_handle_t cbuf) : Cmd(id), changeADL(false) {
 }
 
 bool CmdSet::execute() {
+  if (!Cmd::execute())
+    return false;
+
   pio_sm_set_enabled(pioSm.pio, pioSm.sm, false);
   pio_sm_set_clkdiv_int_frac8 (pioSm.pio, pioSm.sm, config.zdi_speed, 0);
   pio_sm_set_enabled(pioSm.pio, pioSm.sm, true);

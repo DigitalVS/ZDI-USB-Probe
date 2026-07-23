@@ -37,6 +37,9 @@ CmdReg::CmdReg(CmdId id, cbuf_handle_t cbuf) : Cmd(id), isLong(0) {
 }
 
 bool CmdReg::execute() {
+  if (!Cmd::execute())
+    return false;
+
   outBuffer[0] = id; // Message type
 
   switch (id) {
