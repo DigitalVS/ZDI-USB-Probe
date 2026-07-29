@@ -1,6 +1,6 @@
 # ZDI-USB-Probe
 
-This project is a Zilog debug interface (ZDI) software and hardware implementation. Software is a command line interface written in Python, and hardware is either RP Pico development board with few additional resistors, or dedicated board (see next picture) which have some advantages in comparison to the RP Pico board.
+This project is a Zilog debug interface (ZDI) software and hardware implementation. Client side software is a command line interface written in Python, while firmware is made with RP Pico SDK. Hardware is either RP Pico development board with few additional resistors, or dedicated board (see next picture) which have some advantages in comparison to the RP Pico board.
 
 Target devices are all devices with Zilog eZ80, Z8 and ZNEO MCUs.
 
