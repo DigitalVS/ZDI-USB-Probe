@@ -1,8 +1,8 @@
-# ZDI USB Probe
+# ZDI-USB-Probe
 
 This project is a Zilog debug interface (ZDI) software and hardware implementation. Client side software is a command line interface written in Python, while firmware is made with RP Pico SDK. Hardware is either RP Pico development board with few additional resistors, or dedicated board (see next picture) which have some advantages in comparison to the RP Pico board.
 
-Target devices are all devices with Zilog eZ80, Z8 or ZNEO MCUs.
+Target devices are all devices with Zilog eZ80, Z8 and ZNEO MCUs.
 
 <img src="./images/ZDI_USB_Board.png" width="640" alt="ZDI USB Board">
 
@@ -10,7 +10,7 @@ Target devices are all devices with Zilog eZ80, Z8 or ZNEO MCUs.
 
 ### Using RP Pico Development Board
 
-Dedicated ZDI USB Probe is based on RP2040 MCU but its functionality can be used with sole RP Pico board as well. Minimal configuration is shown on the following schematic diagram.
+Dedicated ZDI USB Probe is based on RP2040 MCU but it's functionality can be used with sole RP Pico board as well. Minimal configuration is shown on the following schematic diagram.
 
 <img src="./images/RP_Pico_Board.png" width="640" alt="ZDI USB Board">
 
@@ -28,8 +28,6 @@ Using dedicated ZDI USB Probe board instead of the RP Pico has numerous advantag
 
 
 ## Software
-
-### Command Line Interface
 
 ZDI client interface is written in Python language and as a prerequisite needs working Python 3.9+ installation.
 
@@ -49,7 +47,7 @@ To install a UF2 file on the ZDI USB Probe board, press and hold the BOOTSEL but
 
 ### ZDI Commands Usage
 
-Command line interface consists of a number of commands to read and write data, debug assembly programs and to manage target device state. General command arguments are:
+Command line interface consists of number of commands to read and write data, debug assembly programs and to manage target device state. General command arguments are:
 
 ```powershell
 > .\zdi -h
