@@ -30,15 +30,11 @@ Config config = {
 void wr_dma_irq_handler() {
   dma_hw->ints0 = 1u << wr_dma_ch; // Clear the interrupt request
   //dma_channel_set_read_addr(wr_dma_ch, cmd_wr_buf, false); // Reset start read address
-
-  //printf("wr_dma_irq_handler()\n");
 }
 
 void rd_dma_irq_handler() {
   dma_hw->ints1 = 1u << rd_dma_ch; // Clear the interrupt request
   //dma_channel_set_write_addr(rd_dma_ch, cmd_rd_buf, false); // Reset start write address
-
-  //printf("rd_dma_irq_handler()\n");
 }
 
 //-------------------------------------
@@ -55,7 +51,7 @@ Cmd* Cmd::create(cbuf_handle_t cbuf) {
   switch (cmdCode) {
     case STATUS:
       return new CmdStatus((CmdId) cmdCode, cbuf);
-    case SET: {
+    case SET:
       return new CmdSet((CmdId) cmdCode, cbuf);
     case WRITE:
       return new CmdWrite((CmdId) cmdCode, cbuf);
@@ -82,7 +78,6 @@ Cmd* Cmd::create(cbuf_handle_t cbuf) {
       return new CmdVersion((CmdId) cmdCode, cbuf);
     default:
       printf("Cmd::create(): cmdCode %d not found\n", cmdCode);
-    }
   }
 
   return NULL;
@@ -92,7 +87,7 @@ bool Cmd::execute() {
   uint16_t raw_value = adc_read();
   float voltage = raw_value * ADC_CONST; // Voltage is halved with divider, so max voltage in normal circumstances is about 1.65V
 
-  if (voltage < 0.9f) { // If actual voltage is less than 1.8V, target device is considered as not connected
+  if (voltage < 0.8f) { // If actual voltage is less than 1.6V, target device is considered as not connected (lowest supported input voltage is 1.8V)
     errCode = ERR_NO_TARGET;
     return false;
   }

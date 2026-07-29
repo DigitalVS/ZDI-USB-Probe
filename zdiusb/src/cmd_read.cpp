@@ -22,15 +22,10 @@ bool CmdRead::execute() {
   if (!Cmd::execute())
     return false;
 
-  // for (int i = 0; i < 10; i++)
-  //   cmd_rd_buf[i] = 0;
-
   stopCPU();
 
   if (!config.ez80_stopped)
     busy_wait_at_least_cycles(1000);
-
-  /////////////////////////////////////////////////////
 
   cmd_wr_buf[0] = 4 << 16 | PIO_WRITE_ZDI; // Write
   cmd_wr_buf[1] = ZDI_WR_DATA_L << 24 | inBuffer[0] << 16 | inBuffer[1] << 8 | inBuffer[2]; // Read address (new PC register value)
@@ -59,9 +54,6 @@ bool CmdRead::execute() {
     startCPU();
   }
 
-  // for (int i = 0; i < 10; i++)
-  //   printf("%x ", cmd_rd_buf[i]);
-  // printf("\n");
   return true;
 }
 

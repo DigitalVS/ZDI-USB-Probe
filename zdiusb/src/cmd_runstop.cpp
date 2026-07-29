@@ -19,7 +19,7 @@ CmdRunStop::CmdRunStop(CmdId id, cbuf_handle_t cbuf) : Cmd(id), isFullReset(0), 
 
 bool CmdRunStop::execute() {
   if (!Cmd::execute())
-    return false;
+    return true;  // Don't return false value because client does not expect the answer message
 
   switch (id) {
     case STOP:

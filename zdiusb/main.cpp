@@ -49,7 +49,6 @@ void zdi_task() {
       if (resBuff.startAddr != NULL && tud_cdc_n_connected(0)) {
         uint32_t no = tud_cdc_n_write(0, resBuff.startAddr, resBuff.size);
         tud_cdc_n_write_flush(0 /*itf*/);
-        //printf("Response bytes: %d/%d\n", no, resBuff.size);
       }
     }
 
@@ -62,18 +61,9 @@ void zdi_task() {
 void tud_cdc_rx_cb(uint8_t itf) {
   //printf("RX CDC %d\n", itf);
 
-  // read the available data
+  // Read the available data
   uint32_t count = tud_cdc_n_read(itf, usb_rx_buf, sizeof(usb_rx_buf));
   int cbCount = circular_buf_put_range(me, usb_rx_buf, count);
-
-  // process the received data
-  //buf[count] = 0; // null-terminate the string
-  // now echo data back to the console on CDC 0
-  //printf("Received on CDC 1: %s\n", usb_rx_buf);
-
-  // and echo back OK on CDC 1
-  //tud_cdc_n_write(itf, (uint8_t const *) "OK\r\n", 4);
-  //tud_cdc_n_write_flush(itf);
 }
 
 int main() {
