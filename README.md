@@ -1,6 +1,8 @@
 # ZDI USB Probe
 
-This project is a Zilog debug interface (ZDI) software and hardware implementation. Client side software is a command line interface written in Python, while firmware is made with RP Pico SDK. Hardware is either RP Pico development board with few additional resistors, or dedicated board (see next picture) which have some advantages in comparison to the RP Pico board.
+This project is a Zilog debug interface (ZDI) software and hardware implementation. It enables reading from and writing to a device, debugging with breakpoints and all other ZDI functions.
+
+Client side software is a command line interface written in Python, while firmware is made with RP Pico SDK. Hardware is either RP Pico development board with few additional resistors, or dedicated PCB (see the picture below) which have some advantages in comparison to the RP Pico board.
 
 Target devices are all devices with Zilog eZ80, Z8 or ZNEO MCUs.
 
@@ -8,24 +10,27 @@ Target devices are all devices with Zilog eZ80, Z8 or ZNEO MCUs.
 
 ## Hardware Description
 
+Hardware is based on RP2040 microcontroller and its PIO (Programmable I/O) subsystem with DMA data transfer. This ensures accurate signal waveforms and reliable communication with the target device for all supported ZDI speeds, from 1MHz to 8MHz.
+
+As it's already mentioned, software can be used either with RP Pico board, or with a PCB made specifically for this project, named __ZDI USB Probe__. Both ways are described further in this document.
+
 ### Using RP Pico Development Board
 
-Dedicated ZDI USB Probe is based on RP2040 MCU but its functionality can be used with sole RP Pico board as well. Minimal configuration is shown on the following schematic diagram.
+Dedicated __ZDI USB Probe__ is based on RP2040 MCU but its functionality can be used with sole RP Pico board as well. Minimal configuration is shown on the following schematic diagram.
 
 <img src="./images/RP_Pico_Board.png" width="640" alt="ZDI USB Board">
 
 ### Using ZDI USB Probe Board
 
-Using dedicated ZDI USB Probe board instead of the RP Pico has numerous advantages:
+Using dedicated __ZDI USB Probe__ board instead of the RP Pico has numerous advantages:
 
-* Contains six pin ICD connector to connect to the target device, and USB-C on the other side to connect with a PC computer
+* Contains six pin ICD connector to connect to the target device, and USB-C to connect with a PC computer
 * Level shifters for ZDA and ZCL lines supporting 1.8V to 5V signal voltages
 * Overvoltage protection on a ZDA and ZCL lines and ESD protection on a ZDA, ZCL and reset lines
-* Protection for connecting target device VCC to at least 6.5V
-* Open drain handling of target device reset signal
+* Tolerates target device VCC voltages to at least 6.5V
+* Open drain reset signal output
 * Very small target device power supply load of less than 1mA
 * Reliable communication on all ZDI speeds (up to 8MHz)
-
 
 ## Software
 
@@ -51,7 +56,7 @@ To install a UF2 file on the ZDI USB Probe board, press and hold the BOOTSEL but
 
 Command line interface consists of a number of commands to read and write data, debug assembly programs and to manage target device state. General command arguments are:
 
-```powershell
+```console
 > .\zdi -h
 usage: zdi [-h] [--version] [-q | -v | -t] {read,write,upload,download,set,break,step,breaks,reg,regs,disassm,run,stop,reset,status,devices} ...
 
@@ -62,17 +67,17 @@ positional arguments:
     read                read data from target device
     write               write data to target device
     upload              upload binary file contents to target device
-    download            download binary file contents from target device
-    set                 set basic parameters (eg. ZDI speed, ADL mode, ICD boot mode)
-    break               set or display breakpoint information
+    download            download data from target device and save it to binary file
+    set                 set basic parameters (eg. ZDI speed, ADL mode, probe boot mode)
+    break               set a breakpoint or print breakpoint information
     step                single step execution
     breaks              display information for all breakpoints
     reg                 set or display single register value
     regs                display value for all registers
-    disassm             disassemble a memory block
+    disassm             disassemble and print a memory block
     run                 continue execution from the current address
     stop                break on next instruction
-    reset               reset the CPU
+    reset               reset the CPU and optionally entire target device
     status              show status of target device
     devices             list ZDI USB Probe devices
 
@@ -84,4 +89,191 @@ options:
   -t, --trace           enable debugging output
 ```
 
-This part of documentation is a work in progress!
+This part of documentation is still a **work in progress**!
+
+#### Read Command
+
+```console
+usage: zdi read [-h] address length
+
+positional arguments:
+  address     start read address
+  length      length in bytes to read
+
+options:
+  -h, --help  show this help message and exit
+```
+
+#### Write Command
+
+```console
+usage: zdi write [-h] address hex_string
+
+positional arguments:
+  address     start write address
+  hex_string  hexadecimal string to write (max 255 bytes)
+
+options:
+  -h, --help  show this help message and exit
+```
+
+#### Upload Command
+
+```console
+usage: zdi upload [-h] address filename
+
+positional arguments:
+  address     start upload address
+  filename    binary file to upload
+
+options:
+  -h, --help  show this help message and exit
+```
+
+#### Download Command
+
+```console
+usage: zdi download [-h] [-o] address length filename
+
+positional arguments:
+  address          download start address
+  length           download data length in bytes
+  filename         binary file to save downloaded data
+
+options:
+  -h, --help       show this help message and exit
+  -o, --overwrite  overwrite existing file
+```
+
+#### Set Command
+
+```console
+usage: zdi set [-h] [-s {1,2,4,8}] [-a {0,1}]
+
+options:
+  -h, --help            show this help message and exit
+  -s, --speed {1,2,4,8}
+                        ZDI speed value (1, 2, 4 or 8)
+  -a, --adl {0,1}       ADL mode value (0 or 1)
+```
+
+#### Break Command
+
+```console
+usage: zdi break [-h] [-e [{0,1}]] {1,2,3,4} [address]
+
+positional arguments:
+  {1,2,3,4}             breakpoint number (value 1 to 4)
+  address               breakpoint address
+
+options:
+  -h, --help            show this help message and exit
+  -e, --enable [{0,1}]  enable (value 1) or disable (value 0) a breakpoint
+```
+
+#### Step Command
+
+```console
+usage: zdi step [-h]
+
+options:
+  -h, --help  show this help message and exit
+```
+
+#### Breaks Command
+
+```console
+usage: zdi breaks [-h] [-d]
+
+options:
+  -h, --help     show this help message and exit
+  -d, --disable  disable all breakpoints
+```
+
+#### Reg Command
+
+```console
+usage: zdi reg [-h] [-r [{A,F,AF,B,C,BC,D,E,DE,H,L,HL,IXH,IXL,IX,IYH,IYL,IY,SP,PC}] | -w [{A,F,AF,B,C,BC,D,E,DE,H,L,HL,IXH,IXL,IX,IYH,IYL,IY,SP,PC}]] [-l] [value]
+
+positional arguments:
+  value                 new register value
+
+options:
+  -h, --help            show this help message and exit
+  -r, --read [{A,F,AF,B,C,BC,D,E,DE,H,L,HL,IXH,IXL,IX,IYH,IYL,IY,SP,PC}]
+                        read and display register value
+  -w, --write [{A,F,AF,B,C,BC,D,E,DE,H,L,HL,IXH,IXL,IX,IYH,IYL,IY,SP,PC}]
+                        set register value
+  -l, --long            write 24-bit long value to register pair in non ADL mode
+```
+
+#### Regs Command
+
+```console
+usage: zdi regs [-h]
+
+options:
+  -h, --help  show this help message and exit
+```
+
+#### Disassm Command
+
+```console
+usage: zdi disassm [-h] [-l [16-255]] [-m] [address]
+
+positional arguments:
+  address               start address (default is PC register value)
+
+options:
+  -h, --help            show this help message and exit
+  -l, --length [16-255]
+                        number of bytes to disassemble (default is 64)
+  -m, --motorola        Motorola hex number representation instead of default Intel hex representation
+```
+
+#### Run Command
+
+```console
+usage: zdi run [-h]
+
+options:
+  -h, --help  show this help message and exit
+```
+
+#### Stop Command
+
+```console
+usage: zdi stop [-h]
+
+options:
+  -h, --help  show this help message and exit
+```
+
+#### Reset Command
+
+```console
+usage: zdi reset [-h] [-f] [-s]
+
+options:
+  -h, --help  show this help message and exit
+  -f, --full  full target device reset instead of only CPU core reset
+  -s, --stop  stop CPU on first instruction following the reset
+```
+
+#### Status Command
+
+```console
+usage: zdi status [-h]
+
+options:
+  -h, --help  show this help message and exit
+```
+
+#### Devices Command
+
+```console
+usage: zdi devices [-h]
+
+options:
+  -h, --help  show this help message and exit
+```
