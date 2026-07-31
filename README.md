@@ -56,7 +56,7 @@ To install a UF2 file on the ZDI USB Probe board, press and hold the BOOTSEL but
 
 Command line interface consists of a number of commands to read and write data, debug assembly programs and to manage target device state. General command arguments are:
 
-```console
+```text
 > .\zdi -h
 usage: zdi [-h] [--version] [-q | -v | -t] {read,write,upload,download,set,break,step,breaks,reg,regs,disassm,run,stop,reset,status,devices} ...
 
@@ -93,7 +93,7 @@ This part of documentation is still a **work in progress**!
 
 #### Read Command
 
-```console
+```text
 usage: zdi read [-h] address length
 
 positional arguments:
@@ -106,7 +106,7 @@ options:
 
 #### Write Command
 
-```console
+```text
 usage: zdi write [-h] address hex_string
 
 positional arguments:
@@ -119,7 +119,7 @@ options:
 
 #### Upload Command
 
-```console
+```text
 usage: zdi upload [-h] address filename
 
 positional arguments:
@@ -132,7 +132,7 @@ options:
 
 #### Download Command
 
-```console
+```text
 usage: zdi download [-h] [-o] address length filename
 
 positional arguments:
@@ -147,7 +147,7 @@ options:
 
 #### Set Command
 
-```console
+```text
 usage: zdi set [-h] [-s {1,2,4,8}] [-a {0,1}]
 
 options:
@@ -159,7 +159,7 @@ options:
 
 #### Break Command
 
-```console
+```text
 usage: zdi break [-h] [-e [{0,1}]] {1,2,3,4} [address]
 
 positional arguments:
@@ -173,7 +173,7 @@ options:
 
 #### Step Command
 
-```console
+```text
 usage: zdi step [-h]
 
 options:
@@ -182,7 +182,7 @@ options:
 
 #### Breaks Command
 
-```console
+```text
 usage: zdi breaks [-h] [-d]
 
 options:
@@ -192,7 +192,7 @@ options:
 
 #### Reg Command
 
-```console
+```text
 usage: zdi reg [-h] [-r [{A,F,AF,B,C,BC,D,E,DE,H,L,HL,IXH,IXL,IX,IYH,IYL,IY,SP,PC}] | -w [{A,F,AF,B,C,BC,D,E,DE,H,L,HL,IXH,IXL,IX,IYH,IYL,IY,SP,PC}]] [-l] [value]
 
 positional arguments:
@@ -209,7 +209,7 @@ options:
 
 #### Regs Command
 
-```console
+```text
 usage: zdi regs [-h]
 
 options:
@@ -218,7 +218,7 @@ options:
 
 #### Disassm Command
 
-```console
+```text
 usage: zdi disassm [-h] [-l [16-255]] [-m] [address]
 
 positional arguments:
@@ -233,7 +233,7 @@ options:
 
 #### Run Command
 
-```console
+```text
 usage: zdi run [-h]
 
 options:
@@ -242,7 +242,7 @@ options:
 
 #### Stop Command
 
-```console
+```text
 usage: zdi stop [-h]
 
 options:
@@ -251,7 +251,7 @@ options:
 
 #### Reset Command
 
-```console
+```text
 usage: zdi reset [-h] [-f] [-s]
 
 options:
@@ -262,7 +262,7 @@ options:
 
 #### Status Command
 
-```console
+```text
 usage: zdi status [-h]
 
 options:
@@ -271,7 +271,7 @@ options:
 
 #### Devices Command
 
-```console
+```text
 usage: zdi devices [-h]
 
 options:
