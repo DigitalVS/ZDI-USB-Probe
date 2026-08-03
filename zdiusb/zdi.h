@@ -38,7 +38,6 @@ typedef struct {
   uint8_t ez80_stopped; // Value is one if ZDI_ACTIVE bit in ZDI_STAT register is set
   uint8_t adl_mode;
   ZdiSpeed zdi_speed;
-  uint8_t target_connected; // 1 - Yes, 0 - No
   // Breakpoint addresses
   Uint24 break_addresses[4];
   uint8_t break_enabled[4];
