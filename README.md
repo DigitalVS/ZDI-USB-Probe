@@ -50,7 +50,7 @@ This package is also possible to install from files published in the release sec
 
 Latest firmware version is published in the release section of this repository as a UF2 file.
 
-To install a UF2 file on the ZDI USB Probe board, press and hold the BOOTSEL button while plugging the board (or RP Pico) into your computer via a data-capable USB cable. Release the button once a new drive named RPI-RP2 appears. Drag and drop your .uf2 file onto this drive; the Pico will automatically flash, reboot, and unmount.
+The update process is straightforward. To install a UF2 file on the ZDI USB Probe board, press and hold the BOOTSEL button while plugging the board (or RP Pico) into your computer via a data-capable USB cable. Release the button once a new drive named RPI-RP2 appears. Drag and drop your .uf2 file onto this drive; the Pico will automatically flash, reboot, and unmount.
 
 ### ZDI Commands Usage
 
@@ -89,7 +89,11 @@ options:
   -t, --trace           enable debugging output
 ```
 
-This part of documentation is still a **work in progress**!
+Following sections describe all the available commands. Most of the commands needs target device to be connected and if it is not connected fail with a massage:
+
+```text
+Failure: No target device connected (9).
+```
 
 #### Read Command
 
@@ -146,6 +150,21 @@ options:
 ```
 
 #### Set Command
+
+Set command can set the ZDI communication speed and turn-on/off ADL mode. For example, command ```zdi set -s 2``` will set ZDI speed to 2MHz. After ZDI USB Probe starts, speed is always 1MHz but you can set the higher speed which will be active until the next restart.
+
+Highest possible communication speed depends on a target system clock frequency. Use next table to determine the maximum speed for your case.
+
+| System Clock Frequency | ZDI Clock Frequency
+| ------ | ------
+| 3–10 MHz | 1 MHz
+| 8–16 MHz | 2 MHz
+| 12–24 MHz | 4 MHz
+| 20–50 MHz | 8 MHz
+
+This command does not return any values.
+
+Command syntax is as follows:
 
 ```text
 usage: zdi set [-h] [-s {1,2,4,8}] [-a {0,1}]
@@ -262,6 +281,16 @@ options:
 
 #### Status Command
 
+This command prints ZDI speed and status of the target MCU, like it is shown in the next example:
+
+```
+ZDI speed: 1MHz
+eZ80 status: ADL = 0, MADL = 0, ZDI active: No, Halt/Sleep: No, Interrupts enabled: No
+```
+ZDI is active if target CPU is in ZDI mode, otherwise it is not active.
+
+Command does not have parameters other then ```--help```.
+
 ```text
 usage: zdi status [-h]
 
@@ -270,6 +299,12 @@ options:
 ```
 
 #### Devices Command
+
+Lists all virtual serial ports where ZDI USB Probe is connected. For example, in Windows it will print ```COM7``` if ZDI USB Probe is connected to COM port number 7.
+
+If more probes are connected simultaneously, this command will list all of them. Other commands will automatically recognize connected probes and use first from the list.
+
+One only possible command parameter is a ```--help``` parameter.
 
 ```text
 usage: zdi devices [-h]
