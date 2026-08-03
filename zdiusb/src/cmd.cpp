@@ -23,7 +23,6 @@ Config config = {
   .ez80_stopped = 0,
   .adl_mode = 1,
   .zdi_speed = ZDI_1MHz,
-  .target_connected = 0,
   .break_enabled = { BP_NOT_SET, BP_NOT_SET, BP_NOT_SET, BP_NOT_SET }
 };
 

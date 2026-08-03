@@ -11,15 +11,15 @@ def handler(args):
 
     prog = IcdComm("STATUS", default_device(), output.verbosity())
 
-    status, res_data = prog.send_data_with_response_err(Cmd.STATUS, 7)
+    status, res_data = prog.send_data_with_response_err(Cmd.STATUS, 5)
 
     if status:
-        speed_type, speed, zdi_status_type, zdi_status, target_type, target_connected = struct.unpack('<cccccc', res_data)
+        speed_type, speed, zdi_status_type, zdi_status = struct.unpack('<cccc', res_data)
 
         print(f"ZDI speed: {speed[0]}MHz")
         print(f"eZ80 status: ADL = {zdi_status[0] >> 4 & 1}, MADL = {zdi_status[0] >> 3 & 1}, ZDI active:", "Yes," if (zdi_status[0] >> 7) & 1 else "No,",
               "Halt/Sleep:", "Yes," if (zdi_status[0] >> 5) & 1 else "No,", "Interrupts enabled:", "Yes" if (zdi_status[0] >> 2) & 1 else "No")
-        print(f"Target connected:", "Yes" if target_connected[0] else "No")
+        #print(f"Target connected:", "Yes" if target_connected[0] else "No")
 
 
 def version():

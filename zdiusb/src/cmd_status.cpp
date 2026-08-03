@@ -35,8 +35,6 @@ ResponseBuf CmdStatus::getResponse() {
   Cmd::outBuffer[2] = 32 /config.zdi_speed;
   Cmd::outBuffer[3] = ZDI_STATUS;
   Cmd::outBuffer[4] = config.zdi_status;
-  Cmd::outBuffer[5] = TARGET_CONNECTED;
-  Cmd::outBuffer[6] = config.target_connected;
 
-  return ResponseBuf { .startAddr = Cmd::outBuffer, .size = 7 };
+  return ResponseBuf { .startAddr = Cmd::outBuffer, .size = 5 };
 }

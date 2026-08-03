@@ -14,7 +14,7 @@ typedef enum : uint8_t {ERR_SUCCESS, ERR_UNKNOWN, ERR_PARAM, ERR_DATA_SIZE, ERR_
   ERR_DISASSEMBLER, ERR_NO_TARGET} CmdErrorCode;
 typedef enum : uint8_t {ERROR, VERSION, STATUS, SET, GET, READ, WRITE, VERIFY, BREAK_SET, BREAK_READ, BREAKS, STEP, REG_SET, REG_READ, REGS, REGS_EXX, RUN, STOP,
   RESET, DISASSEMBLE, DISASSEMBLE_ADDR} CmdId;
-typedef enum : uint8_t {ZDI_SPEED = 1, ADL_MODE, ZDI_STATUS, TARGET_CONNECTED, BOOT_MODE} StateType; // Used by SET and STATE commands
+typedef enum : uint8_t {ZDI_SPEED = 1, ADL_MODE, ZDI_STATUS, BOOT_MODE} StateType; // Used by SET and STATE commands
 
 typedef enum : uint8_t {BP_DISABLED, BP_ENABLED, BP_NOT_SET} BreakpointStatus;
 

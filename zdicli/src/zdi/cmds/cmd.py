@@ -30,8 +30,7 @@ class State:
     ZDI_SPEED = b'\x01'
     ADL_MODE = b'\x02'
     ZDI_STATUS = b'\x03' # ZDI status register
-    TARGET_CONNECTED = b'\x04'
-    BOOT_MODE = b'\x05'
+    BOOT_MODE = b'\x04'
 
 # Break message fields
 class BreakpointFields:

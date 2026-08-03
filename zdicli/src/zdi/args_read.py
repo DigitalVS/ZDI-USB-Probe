@@ -102,7 +102,7 @@ def _arg_parser():
     upload_act.set_defaults(func=zdi.cmds.upload_cmd.handler)
 
     # Download
-    download_act = subs.add_parser("download", help="download binary file contents from target device")
+    download_act = subs.add_parser("download", help="download data from target device and save it to binary file")
     download_act.add_argument(
         "-o", "--overwrite", action="store_true", help="overwrite existing file"
     )
@@ -124,7 +124,7 @@ def _arg_parser():
     download_act.set_defaults(func=zdi.cmds.download_cmd.handler)
 
     # Set
-    set_act = subs.add_parser("set", help="set basic parameters (eg. ZDI speed, ADL mode, ICD boot mode)")
+    set_act = subs.add_parser("set", help="set basic parameters (eg. ZDI speed, ADL mode, probe boot mode)")
     set_act.add_argument(
         "-s",
         "--speed",
@@ -142,7 +142,7 @@ def _arg_parser():
     set_act.set_defaults(func=zdi.cmds.set_cmd.handler)
 
     # Break
-    break_act = subs.add_parser("break", help="set or display breakpoint information")
+    break_act = subs.add_parser("break", help="set a breakpoint or print breakpoint information")
     break_act.add_argument('break_no', type=int, choices=[1, 2, 3, 4], help='breakpoint number (value 1 to 4)')
     break_act.add_argument(
         "-e",
@@ -209,7 +209,7 @@ def _arg_parser():
     regs_act.set_defaults(func=zdi.cmds.reg_cmd.handler_regs)
 
     # Disassemble
-    disassm_act = subs.add_parser("disassm", help="disassemble a memory block")
+    disassm_act = subs.add_parser("disassm", help="disassemble and print a memory block")
     disassm_act.set_defaults(func=zdi.cmds.disassm_cmd.handler)
     disassm_act.add_argument(
         "address",
@@ -237,7 +237,7 @@ def _arg_parser():
     stop_act.set_defaults(func=zdi.cmds.runstop_cmd.handler_stop)
 
     # Reset
-    reset_act = subs.add_parser("reset", help="reset the CPU")
+    reset_act = subs.add_parser("reset", help="reset the CPU and optionally entire target device")
     reset_act.set_defaults(func=zdi.cmds.runstop_cmd.handler_reset)
     reset_act.add_argument(
         "-f", "--full", action="store_true", help="full target device reset instead of only CPU core reset",
