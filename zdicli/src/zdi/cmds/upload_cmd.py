@@ -29,9 +29,9 @@ def handler(args):
             ret = prog.send_file(int_or_hex(args.address), file)
 
             if ret == ErrorCode.ERR_SUCCESS:
-                output.success("DOWNLOAD", f"{ret.description}")
+                output.success("UPLOAD", f"{ret.description}")
             else:
-                output.error("DOWNLOAD", f"{ret.description}")
+                output.error("UPLOAD", f"{ret.description}")
 
             file.close()
     except FileNotFoundError:

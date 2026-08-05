@@ -62,7 +62,7 @@ def _arg_parser():
     read_act.add_argument(
         "length",
         type=str,
-        help="length in bytes to read",
+        help="length in bytes to read (max 255 bytes)",
     )
     read_act.set_defaults(func=zdi.cmds.read_cmd.handler)
 
@@ -144,15 +144,12 @@ def _arg_parser():
     # Break
     break_act = subs.add_parser("break", help="set a breakpoint or print breakpoint information")
     break_act.add_argument('break_no', type=int, choices=[1, 2, 3, 4], help='breakpoint number (value 1 to 4)')
-    break_act.add_argument(
-        "-e",
-        "--enable",
-        type=int,
-        choices=[0, 1],
-        nargs="?",
-        const=1, # if argument is provided but value not set
-        default=None, # if argument is not provided
-        help="enable (value 1) or disable (value 0) a breakpoint",
+    break_group = break_act.add_mutually_exclusive_group(required=False)
+    break_group.add_argument(
+        "-e", "--enable", action="store_true", help="enable a breakpoint",
+    )
+    break_group.add_argument(
+        "-d", "--disable", action="store_true", help="disable a breakpoint",
     )
     break_act.add_argument(
         "address",
@@ -175,7 +172,7 @@ def _arg_parser():
 
     # Reg
     reg_act = subs.add_parser("reg", help="set or display single register value")
-    reg_group = reg_act.add_mutually_exclusive_group(required=False)
+    reg_group = reg_act.add_mutually_exclusive_group(required=True)
     REG_CHOICES = ['A', 'F', 'AF', 'B', 'C', 'BC', 'D', 'E', 'DE', 'H', 'L', 'HL', 'IXH', 'IXL', 'IX', 'IYH', 'IYL', 'IY', 'SP', 'PC']
     reg_group.add_argument(
         "-r",
@@ -204,7 +201,7 @@ def _arg_parser():
     )
     reg_act.set_defaults(func=zdi.cmds.reg_cmd.handler)
 
-    # Reg
+    # Regs
     regs_act = subs.add_parser("regs", help="display value for all registers")
     regs_act.set_defaults(func=zdi.cmds.reg_cmd.handler_regs)
 

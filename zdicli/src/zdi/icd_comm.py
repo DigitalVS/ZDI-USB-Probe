@@ -201,6 +201,8 @@ class IcdComm(object):
 
                     if self._verbosity > 0:
                         progress.update(n=length)
+                else:
+                    self._error_code = ErrorCode.ERR_UNKNOWN
 
                 bytes_written += length
                 address += len(file_data) # Next packet address

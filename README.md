@@ -97,18 +97,33 @@ Failure: No target device connected (9).
 
 #### Read Command
 
+Read command reads data from the target device and prints it as a hex dump, like in the following example. It can read up to 255 bytes. For more than 255 bytes, you can use a download command. Start address can be decimal or hexadecimal number.
+
+```
+>zdi read 0x10000 10
+0x010000 27 fd b7 ed 42 20 28 ed 55 e7                   |'...B (.U.|
+```
+
+Full read command syntax is listed here:
+
 ```text
 usage: zdi read [-h] address length
 
 positional arguments:
   address     start read address
-  length      length in bytes to read
+  length      length in bytes to read (max 255 bytes)
 
 options:
   -h, --help  show this help message and exit
 ```
 
 #### Write Command
+
+Write command sends and writes bytes to target RAM memory. Bytes have to be provided as a hexadecimal string, like in the following example. This command can write up to 255 bytes. For more than 255 bytes, please, use upload command. Start address can be decimal or hexadecimal number.
+
+```
+>zdi write 0x60000 0x1122334455667788
+```
 
 ```text
 usage: zdi write [-h] address hex_string
@@ -123,6 +138,14 @@ options:
 
 #### Upload Command
 
+Upload command uploads binary file contents to the target device RAM memory starting from the provided address. Size of the data to upload has no limitation and is limited only by the size of target device memory.
+
+```
+>zdi upload 0x123456 D:\Projects\test.bin
+UPLOAD    : 100%|████████████████████████████████████████████████████████████████████████| 32/32 [00:00<00:00, 19359.26b/s]
+UPLOAD: Command successfully completed
+```
+
 ```text
 usage: zdi upload [-h] address filename
 
@@ -135,6 +158,16 @@ options:
 ```
 
 #### Download Command
+
+Download command downloads data from the target device memory to a binary file. Size of the data to download has no limitation and is limited only by the size of target device memory.
+
+```
+>zdi download 0x12345 0x20 E:\Downloads\test.bin
+DOWNLOAD  : 100%|████████████████████████████████████████████████████████████████████████| 32/32 [00:00<00:00, 9676.14b/s]
+DOWNLOAD: Command successfully completed
+```
+
+Optionally, overwrite option may be added to overwrite download file of the same name if it exists.
 
 ```text
 usage: zdi download [-h] [-o] address length filename
@@ -162,6 +195,8 @@ Highest possible communication speed depends on a target system clock frequency.
 | 12–24 MHz | 4 MHz
 | 20–50 MHz | 8 MHz
 
+ZDI communication speed does not have much influence to the most of the commands because they are already short and many other factors are also important (e.g. USB communication speed via virtual serial port), maybe even more than ZDI clock frequency. However, upload and download commands can benefit from higher ZDI speeds, especially if the amount of data for upload/download is larger.
+
 This command does not return any values.
 
 Command syntax is as follows:
@@ -178,19 +213,46 @@ options:
 
 #### Break Command
 
+Break command sets or prints single breakpoint information.
+
+First example sets first breakpoint address to hex value 0x1122aa. Optionally, it can be 
+set as enabled, with option -e, or disabled with option -d.
+
+```
+>zdi break 1 0x1122aa
+Breakpoint no 1 is successfully set to address: 0x1122aa
+```
+Next example prints information about the first breakpoint. Note that its status is not 
+yet set, meaning it's initially neither enabled nor disabled. Second example below shows the enabled breakpoint.
+
+```
+>zdi break 1
+Breakpoint no: 1, Status: Not set, Address: 0x1122aa
+```
+
+```
+>zdi break 1
+Breakpoint no: 1, Status: Enabled, Address: 0x1122aa
+```
+
+Command has the following syntax:
+
 ```text
-usage: zdi break [-h] [-e [{0,1}]] {1,2,3,4} [address]
+usage: zdi break [-h] [-e | -d] {1,2,3,4} [address]
 
 positional arguments:
-  {1,2,3,4}             breakpoint number (value 1 to 4)
-  address               breakpoint address
+  {1,2,3,4}      breakpoint number (value 1 to 4)
+  address        breakpoint address
 
 options:
-  -h, --help            show this help message and exit
-  -e, --enable [{0,1}]  enable (value 1) or disable (value 0) a breakpoint
+  -h, --help     show this help message and exit
+  -e, --enable   enable a breakpoint
+  -d, --disable  disable a breakpoint
 ```
 
 #### Step Command
+
+This command single-steps program execution by asserting a BREAK after the next instruction. To execute step command, CPU must be in stopped state. If it is running, error message is printed and command aborts.
 
 ```text
 usage: zdi step [-h]
@@ -201,6 +263,15 @@ options:
 
 #### Breaks Command
 
+This command prints information about all breakpoints and can, optionally, disable all the breakpoints. 
+```
+>zdi.py breaks
+Breakpoint no: 1, Status: Enabled, Address: 0x1122aa
+Breakpoint no: 2, Status: Not set, Address: 0x0
+Breakpoint no: 3, Status: Not set, Address: 0x0
+Breakpoint no: 4, Status: Not set, Address: 0x0
+```
+
 ```text
 usage: zdi breaks [-h] [-d]
 
@@ -210,6 +281,15 @@ options:
 ```
 
 #### Reg Command
+
+```
+>zdi reg -w B 0x11
+```
+
+```
+>zdi reg -r BC
+REG: Register BC value is 0x0BC411
+```
 
 ```text
 usage: zdi reg [-h] [-r [{A,F,AF,B,C,BC,D,E,DE,H,L,HL,IXH,IXL,IX,IYH,IYL,IY,SP,PC}] | -w [{A,F,AF,B,C,BC,D,E,DE,H,L,HL,IXH,IXL,IX,IYH,IYL,IY,SP,PC}]] [-l] [value]
@@ -228,6 +308,20 @@ options:
 
 #### Regs Command
 
+This command displays all register current values.
+
+```
+>zdi regs
+AF: 0x004201
+BC: 0x0BC437
+DE: 0x0BFF79
+HL: 0x008A8D
+IX: 0x0BFF7A
+IY: 0x0BCF0D
+SP: 0x0BFF79
+PC: 0x008A98
+```
+
 ```text
 usage: zdi regs [-h]
 
@@ -236,6 +330,25 @@ options:
 ```
 
 #### Disassm Command
+
+This command disassembles target device memory starting from provided address and 
+print it to the client's screen (see next example). By default, it uses Intel 
+notation to display hexadecimal numbers but, optionally, it can display them in a Motorola's 
+notation.
+
+```
+>zdi disassm 0x3000 -l 20
+3000 jp 0003164h
+3004 ld hl,(ix-003h)
+3007 ld a,(hl)
+3008 ld b,a
+3009 rla
+300a sbc hl,hl
+300c ld l,b
+300d ld bc,0000072h
+3011 or a,a
+3012 sbc hl,bc
+```
 
 ```text
 usage: zdi disassm [-h] [-l [16-255]] [-m] [address]
@@ -252,6 +365,10 @@ options:
 
 #### Run Command
 
+This command set the CPU to continue execution from current PC register value (releases the break state). If CPU is already running, this command has no effect.
+
+Command does not print any response massage. Status command can be used to check if CPU is running or it is stopped.
+
 ```text
 usage: zdi run [-h]
 
@@ -261,6 +378,10 @@ options:
 
 #### Stop Command
 
+This command stops the CPU (set it in break state). If CPU is already in stopped state, this command has no effect.
+
+Command does not print any response massage. Status command can be used to check if CPU is running or it is stopped.
+
 ```text
 usage: zdi stop [-h]
 
@@ -269,6 +390,16 @@ options:
 ```
 
 #### Reset Command
+
+This command resets the CPU, and when issued with -f/--full option, resets not only the CPU but resets the whole target device. Optionally, additional -s/--stop option stops the CPU on the first instruction. Stop option has effect only when used with full target reset.
+
+```
+>zdi reset
+```
+
+```
+>zdi reset -f
+```
 
 ```text
 usage: zdi reset [-h] [-f] [-s]
@@ -281,13 +412,13 @@ options:
 
 #### Status Command
 
-This command prints ZDI speed and status of the target MCU, like it is shown in the next example:
+This command prints ZDI speed and status of the target CPU, like it is shown in the next example:
 
 ```
 ZDI speed: 1MHz
 eZ80 status: ADL = 0, MADL = 0, ZDI active: No, Halt/Sleep: No, Interrupts enabled: No
 ```
-ZDI is active if target CPU is in ZDI mode, otherwise it is not active.
+ZDI is active if target CPU is stopped, otherwise it is not active.
 
 Command does not have parameters other then ```--help```.
 
@@ -312,3 +443,4 @@ usage: zdi devices [-h]
 options:
   -h, --help  show this help message and exit
 ```
+

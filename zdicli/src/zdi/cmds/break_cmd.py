@@ -18,11 +18,12 @@ def handler(args):
                 output.error("BREAK", f"Invalid address: {args.address}. Address is 3 bytes long number.")
                 return
 
-        if args.enable is None and args.address is None: # Get a breakpoint data (number, enabled, address)
+        if not args.enable and not args.disable and args.address is None: # Get a breakpoint data (number, enabled, address)
             status, bp_response = prog.send_data_with_response_err(Cmd.BREAK_READ + args.break_no.to_bytes(), 6)
         else: # Returns the same data as it was sent
             status, bp_response = prog.send_data_with_response_err(Cmd.BREAK_SET + BreakpointFields.NUMBER + args.break_no.to_bytes() +
-                        (b'' if args.enable is None else BreakpointFields.ENABLE + args.enable.to_bytes()) +
+                        (b'' if not args.enable else BreakpointFields.ENABLE + b'\x01') +
+                        (b'' if not args.disable else BreakpointFields.ENABLE + b'\x00') +
                         (b'' if args.address is None else BreakpointFields.ADDRESS + int_or_hex(args.address).to_bytes(3, 'little')), 6)
 
         if status:

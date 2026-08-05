@@ -1,4 +1,4 @@
-from zdi.cmds.cmd import Cmd, ErrorCode, Registers, DATA_SIZE_24BIT
+from zdi.cmds.cmd import Cmd, Registers, DATA_SIZE_24BIT
 from zdi.devices import default_device
 from zdi.icd_comm import IcdComm
 from zdi.output import Output
@@ -23,6 +23,7 @@ def handler(args):
             if value > DATA_SIZE_24BIT:
                 output.error("REG", f"Invalid value: {args.value}. Value is a one to three bytes long number.")
                 return
+
         reg_val = 0
 
         if args.read is not None:
