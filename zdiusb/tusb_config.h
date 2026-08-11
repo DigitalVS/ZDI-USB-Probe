@@ -21,9 +21,9 @@
 // Enable 1 CDC class
 #define CFG_TUD_CDC             (1)
 // Set CDC FIFO buffer sizes
-#define CFG_TUD_CDC_RX_BUFSIZE  (512)
-#define CFG_TUD_CDC_TX_BUFSIZE  (512)
-#define CFG_TUD_CDC_EP_BUFSIZE  (512)
+#define CFG_TUD_CDC_RX_BUFSIZE  (4096)
+#define CFG_TUD_CDC_TX_BUFSIZE  (4096)
+#define CFG_TUD_CDC_EP_BUFSIZE  (4096)
 
 //rx_unread_buf_sz = 256
 
