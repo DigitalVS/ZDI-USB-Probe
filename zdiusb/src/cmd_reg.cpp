@@ -11,6 +11,8 @@ extern int rd_dma_ch;
 
 static uint8_t regList[] = {ZDI_REG_AF, ZDI_REG_BC, ZDI_REG_DE, ZDI_REG_HL, ZDI_REG_IX, ZDI_REG_IY, ZDI_REG_SP, ZDI_REG_PC};
 static uint8_t regPairs[] = {REG_AF, REG_BC, REG_DE, REG_HL, REG_IX, REG_IY, REG_PC, REG_SP};
+// List of single registers which has first byte position in ZDI three-byte notation. Than, the rest of single registers are second byte position.
+static uint8_t regFirst[] = {REG_A, REG_C, REG_E, REG_L, REG_IXL, REG_IYL};
 
 CmdReg::CmdReg(CmdId id, cbuf_handle_t cbuf) : Cmd(id), isLong(0) {
   switch (id) {
@@ -84,6 +86,9 @@ bool CmdReg::execute() {
 }
 
 ResponseBuf CmdReg::getResponse() {
+  if (id == REGS_EXX) // Do not send anything back
+    return ResponseBuf { .startAddr = NULL, .size = 0 };
+
   ResponseBuf responseBuf;
   responseBuf.startAddr = outBuffer;
   responseBuf.size = id == REGS ? 25 : 5;
@@ -104,15 +109,28 @@ void CmdReg::setReg() {
     }
 
   if (!regPair) { // Register is one byte long, so read first its value to find rest of the bytes
+    bool firstByte = false; // True if single register has lowest byte value in tree-byte ZDI notation
+
+    for (int i = 0; i < sizeof(regFirst); i++)
+      if (reg == regFirst[i]) {
+        firstByte = true;
+        break;
+      }
+
     Uint24 regReadValue = readReg(getRegCtl() & 0x7F);
 
-    // Leave lowest byte in inBuffer[0] unchanged
-    regValue.value_h = regReadValue.value_h;
+    if (firstByte) { // Leave second byte unchanged
+      regValue.value_h = regReadValue.value_h;
+    } else {
+      regValue.value_h = regValue.value_l; // Because single register value is received in the first byte (lowest value byte) and this is not first byte register
+      regValue.value_l = regReadValue.value_l;
+    }
+
     regValue.value_u = regReadValue.value_u;
   } else if (!config.adl_mode && !isLong) { // Register pairs in 16-bit mode
     Uint24 regReadValue = readReg(getRegCtl() & 0x7F);
 
-    regValue.value_u = regReadValue.value_u; // Keep the highest byte
+    regValue.value_u = regReadValue.value_u; // Keep the highest byte unchanged
   }
 
   // Write new register value
