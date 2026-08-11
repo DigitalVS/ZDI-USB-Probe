@@ -54,15 +54,16 @@ def handler(args):
 def handler_regs(args):
     output = Output(args)
 
-    prog = IcdComm(
-        "REGS", default_device(), output.verbosity()
-    )
+    if not args.exx:
+        prog = IcdComm("REGS", default_device(), output.verbosity())
+        status, reg_response = prog.send_data_with_response_err(Cmd.REGS, 25)
 
-    status, reg_response = prog.send_data_with_response_err(Cmd.REGS, 25)
+        if status:
+            regs = ["AF", "BC", "DE", "HL", "IX", "IY", "SP", "PC"]
 
-    if status:
-        regs = ["AF", "BC", "DE", "HL", "IX", "IY", "SP", "PC"]
-
-        for i in range(0, 8):
-            reg_val = int.from_bytes(reg_response[i * 3: i * 3 + 3], byteorder='little')
-            print(f"{regs[i]}: 0x{reg_val:06X}")
+            for i in range(0, 8):
+                reg_val = int.from_bytes(reg_response[i * 3: i * 3 + 3], byteorder='little')
+                print(f"{regs[i]}: 0x{reg_val:06X}")
+    else: # EXX
+        prog = IcdComm("REGS_EXX", default_device(), output.verbosity())
+        prog.send_data(Cmd.REGS_EXX)
