@@ -13,7 +13,7 @@ import zdi.cmds.write_cmd
 
 BOARD_NAME = "ZDI USB Probe"
 PROG_NAME = f"{BOARD_NAME} Command Line Interface"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 class LazyVersion: # Lazy version to not execute every time module is loaded
     def _resolve(self): # Resolve the function into a string once
@@ -202,7 +202,10 @@ def _arg_parser():
     reg_act.set_defaults(func=zdi.cmds.reg_cmd.handler)
 
     # Regs
-    regs_act = subs.add_parser("regs", help="display value for all registers")
+    regs_act = subs.add_parser("regs", help="display value for all registers or exchange register set")
+    regs_act.add_argument(
+         "-x", "--exx", action="store_true", help="exchange CPU register set"
+    )
     regs_act.set_defaults(func=zdi.cmds.reg_cmd.handler_regs)
 
     # Disassemble
@@ -218,7 +221,7 @@ def _arg_parser():
         '-l', '--length',
         type=int_range,
         default=64,
-        metavar="[16-255]",
+        metavar="[16-256]",
         help="number of bytes to disassemble (default is 64)"
     )
     disassm_act.add_argument(
