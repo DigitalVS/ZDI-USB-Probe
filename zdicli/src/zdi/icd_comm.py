@@ -135,7 +135,7 @@ class IcdComm(object):
 
             # Read actual data
             tmp_data = self._serial.read(3) # Read data size, two bytes long
-            rd_size = int.from_bytes(tmp_data[0:1], byteorder='little')
+            rd_size = int.from_bytes(tmp_data[0:2], byteorder='little')
             checksum = tmp_data[2]
             return True, checksum, rd_size, self._serial.read(rd_size)
 
@@ -160,7 +160,7 @@ class IcdComm(object):
 
             # Read actual data
             tmp_data = self._serial.read(2) # Read data size, two bytes long
-            rd_size = int.from_bytes(tmp_data[0:1], byteorder='little')
+            rd_size = int.from_bytes(tmp_data[0:2], byteorder='little')
             return True, rd_size, self._serial.read(rd_size)
 
         return False, 0, None
