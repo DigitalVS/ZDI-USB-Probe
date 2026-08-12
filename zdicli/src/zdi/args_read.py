@@ -130,14 +130,20 @@ def _arg_parser():
         "--speed",
         type=int,
         choices=[1, 2, 4, 8],
-        help="ZDI speed value (1, 2, 4 or 8)",
+        help="set ZDI speed (1, 2, 4 or 8)",
     )
     set_act.add_argument(
         "-a",
         "--adl",
         type=int,
         choices=[0, 1],
-        help="ADL mode value (0 or 1)",
+        help="set ADL mode value (0 or 1)",
+    )
+    set_act.add_argument(
+        "-b",
+        "--bootusb",
+        action="store_true",
+        help="boot in USB bootloader mode",
     )
     set_act.set_defaults(func=zdi.cmds.set_cmd.handler)
 

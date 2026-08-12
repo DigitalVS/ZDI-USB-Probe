@@ -2,6 +2,7 @@
 
 #include "hardware/pio.h"
 #include "hardware/dma.h"
+#include "pico/bootrom.h"
 #include "cmd_set.h"
 
 extern Config config;
@@ -25,6 +26,9 @@ CmdSet::CmdSet(CmdId id, cbuf_handle_t cbuf) : Cmd(id), changeADL(false) {
           config.adl_mode = tmp;
           changeADL = true;
         }
+        break;
+      case BOOT_MODE: // Reboots the RP2040 into USB bootloader mode
+        reset_usb_boot(0, 0);
         break;
     }
   }
