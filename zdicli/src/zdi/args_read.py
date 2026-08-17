@@ -226,9 +226,9 @@ def _arg_parser():
     disassm_act.add_argument(
         '-l', '--length',
         type=int_range,
-        default=64,
+        default=32,
         metavar="[16-255]",
-        help="number of bytes to disassemble (default is 64)"
+        help="number of bytes to disassemble (default is 32)"
     )
     disassm_act.add_argument(
         "-m", "--motorola", action="store_false", help="Motorola hex number representation instead of default Intel hex representation",

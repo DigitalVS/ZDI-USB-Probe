@@ -131,7 +131,7 @@ static bool put(struct zdis_ctx *ctx, enum zdis_put kind, int32_t val, bool il) 
 
 //-------------------------------------
 
-CmdDisassemble::CmdDisassemble(CmdId id, cbuf_handle_t cbuf) : Cmd(id), instNo(0), respLength(0), dataSize(64), flags(0) {
+CmdDisassemble::CmdDisassemble(CmdId id, cbuf_handle_t cbuf) : Cmd(id), instNo(0), respLength(0), dataSize(32), flags(0) {
   switch (id) {
     case DISASSEMBLE:
       startAddr = config.pc_reg;
