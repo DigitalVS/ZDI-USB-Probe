@@ -22,8 +22,8 @@ def handler(args):
         data = bytearray.fromhex(args.hex_string.replace('0x', ''))
         length = len(data)
 
-        if length > 255:
-            output.error("WRITE", f"Length too long: {length}. Max length is 255 bytes.")
+        if length > 256:
+            output.error("WRITE", f"Length too long: {length}. Max length is 256 bytes.")
             return
 
         status, wr_response = prog.send_data_with_response_err(Cmd.WRITE + address.to_bytes(3, 'little') + length.to_bytes(2, byteorder='little') +  data, 2)

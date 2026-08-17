@@ -62,7 +62,7 @@ def _arg_parser():
     read_act.add_argument(
         "length",
         type=str,
-        help="length in bytes to read (max 255 bytes)",
+        help="length in bytes to read (max 256 bytes)",
     )
     read_act.set_defaults(func=zdi.cmds.read_cmd.handler)
 
@@ -80,7 +80,7 @@ def _arg_parser():
         "hex_string",
         #nargs='?',
         type=str,
-        help="hexadecimal string to write (max 255 bytes)",
+        help="hexadecimal string to write (max 256 bytes)",
     )
     write_act.set_defaults(func=zdi.cmds.write_cmd.handler)
 
@@ -227,7 +227,7 @@ def _arg_parser():
         '-l', '--length',
         type=int_range,
         default=64,
-        metavar="[16-256]",
+        metavar="[16-255]",
         help="number of bytes to disassemble (default is 64)"
     )
     disassm_act.add_argument(

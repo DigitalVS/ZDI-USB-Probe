@@ -191,7 +191,7 @@ bool CmdDisassemble::execute() {
       Cmd::outBuffer[index++] = da_buf[i];
 
     instNo++;
-    respLength += 5 + instStrLength; // 5 - three byte address + two byte instruction string length
+    respLength += 5 + instStrLength; // 5 - three byte address + two byte instruction string length per instruction line
     da_buf_index = da_buf;
   }
 
@@ -208,7 +208,7 @@ ResponseBuf CmdDisassemble::getResponse() {
   Cmd::outBuffer[3] = instNo & 0xFF; // Two bytes number of instructions in a message
   Cmd::outBuffer[4] = (instNo >> 8) & 0xFF;
 
-  return ResponseBuf { .startAddr = Cmd::outBuffer, .size = (uint32_t) respLength + 3}; // Additional three bytes for cmd name and length
+  return ResponseBuf { .startAddr = Cmd::outBuffer, .size = (uint32_t) respLength + 3}; // Additional three bytes for cmd type and length
 }
 
 void CmdDisassemble::readData() {

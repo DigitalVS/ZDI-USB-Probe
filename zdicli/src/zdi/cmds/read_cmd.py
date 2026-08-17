@@ -21,8 +21,8 @@ def handler(args):
 
         length = int_or_hex(args.length)
 
-        if length > 255:
-            output.error("READ", f"Length too long: {args.length}. Max length is 255 bytes.")
+        if length > 256:
+            output.error("READ", f"Length too long: {args.length}. Max length is 256 bytes.")
             return
 
         status, rd_checksum, rd_size, rd_data = prog.send_data_with_var_response_crc(Cmd.READ + address.to_bytes(3, 'little') + length.to_bytes(2, 'little'))
