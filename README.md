@@ -53,7 +53,7 @@ This package is also possible to install from files published in the release sec
 
 Latest firmware version is published in the release section of this repository as a UF2 file.
 
-The update process is straightforward. To install a UF2 file on the ZDI USB Probe board, press and hold the BOOTSEL button while plugging the board (or RP Pico) into your computer via a data-capable USB cable. Release the button once a new drive named RPI-RP2 appears. Drag and drop your .uf2 file onto this drive; the Pico will automatically flash, reboot, and unmount.
+The update process is straightforward. To install a UF2 file on the __ZDI USB Probe__ board, press and hold the BOOTSEL button while plugging the board (or RP Pico) into your computer via a data-capable USB cable. Release the button once a new drive named RPI-RP2 appears. Drag and drop your .uf2 file onto this drive; the Pico will automatically flash, reboot, and unmount.
 
 ### ZDI Commands Usage
 
@@ -77,7 +77,7 @@ positional arguments:
     breaks              display information for all breakpoints
     reg                 set or display single register value
     regs                display value for all registers or exchange register set
-    disassm             disassemble and print a memory block
+    disassm             disassemble a memory block
     run                 continue execution from the current address
     stop                break on next instruction
     reset               reset the CPU and optionally entire target device
@@ -187,7 +187,7 @@ options:
 
 #### Set Command
 
-Set command can set the ZDI communication speed, turn-on/off ADL mode and set Probe into the USB bootloader mode. For example, command ```zdi set -s 2``` will set ZDI speed to 2MHz. After ZDI USB Probe starts, speed is always 1MHz, but it can be set the higher speed which will be active until the next restart.
+Set command can set the ZDI communication speed, turn-on/off ADL mode and set Probe into the USB bootloader mode. For example, command ```zdi set -s 2``` will set ZDI speed to 2MHz. After __ZDI USB Probe__ starts, speed is always 1MHz, but it can be set the higher speed which will be active until the next restart.
 
 Highest possible communication speed depends on a target system clock frequency. Use next table to determine the maximum speed for your case.
 
@@ -226,7 +226,7 @@ options:
 Break command sets or prints single breakpoint information.
 
 First example sets first breakpoint address to hex value 0x1122aa. Optionally, it can be 
-set as enabled, with option -e, or disabled with option -d.
+set breakpoint as enabled, with option -e, or disabled with option -d.
 
 ```
 >zdi break 1 0x1122aa
@@ -275,7 +275,7 @@ options:
 
 This command prints information about all breakpoints and can, optionally, disable all the breakpoints. 
 ```
->zdi.py breaks
+>zdi breaks
 Breakpoint no: 1, Status: Enabled, Address: 0x1122aa
 Breakpoint no: 2, Status: Not set, Address: 0x0
 Breakpoint no: 3, Status: Not set, Address: 0x0
@@ -324,7 +324,7 @@ Stack pointer (SP) register is a 24-bit SPL register in ADL mode, and 16-bit SPS
 *Write* command can set any 8-bit register, including IXL, IXH, IYL and IYH. In ADL mode, register pairs (BC, DE, HL) and 
 IX and IY registers are written as 24-bit registers. In Z80 mode, register pairs and IX and IY registers are processed
 as 16-bit registers, unless *--long* option is used when they are assumed as 24-bit registers. This *--long* option is convenient
-to use to set MBASE value.
+to use to set MBASE value. Of course, MBASE value can be set in ADL mode as well, which is also the official way to set it. 
 
 Next example shows setting B register to value 0x11.
 
@@ -373,7 +373,7 @@ PC: 0x008A98
 ```
 
 If used with **--exx** option, this command exchanges target CPU register set without displaying
-a response message.
+a response message. Such command exchanges both AF and all register pairs (BC, DE, HL).
 
 ```text
 usage: zdi regs [-h] [-x]
@@ -467,7 +467,7 @@ options:
 
 #### Status Command
 
-This command prints ZDI speed and status of the target CPU, like it is shown in the next example:
+This command prints ZDI speed and status of the target CPU, like shown in the next example:
 
 ```
 ZDI speed: 1MHz
@@ -486,7 +486,7 @@ options:
 
 #### Devices Command
 
-Lists all virtual serial ports where ZDI USB Probe is connected. For example, in Windows it will print ```COM7``` if ZDI USB Probe is connected to COM port number 7.
+Lists all virtual serial ports where ZDI USB Probe is connected. For example, in Windows it will print ```COM7``` if __ZDI USB Probe__ is connected to COM port number 7.
 
 If more probes are connected simultaneously, this command will list all of them. Other commands will automatically recognize connected probes and use first from the list.
 

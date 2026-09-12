@@ -215,7 +215,7 @@ def _arg_parser():
     regs_act.set_defaults(func=zdi.cmds.reg_cmd.handler_regs)
 
     # Disassemble
-    disassm_act = subs.add_parser("disassm", help="disassemble and print a memory block")
+    disassm_act = subs.add_parser("disassm", help="disassemble a memory block")
     disassm_act.set_defaults(func=zdi.cmds.disassm_cmd.handler)
     disassm_act.add_argument(
         "address",
