@@ -475,7 +475,7 @@ eZ80 status: ADL = 0, MADL = 0, ZDI active: No, Halt/Sleep: No, Interrupts enabl
 ```
 ZDI is active if target CPU is stopped, otherwise it is not active.
 
-Command does not have parameters other then ```--help```.
+Command does not have parameters other than ```--help```.
 
 ```text
 usage: zdi status [-h]
